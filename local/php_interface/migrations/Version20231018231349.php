@@ -46,7 +46,7 @@ class Version20231018231349 extends Version
     0 => 's1',
   ),
   'CODE' => 'resident',
-  'API_CODE' => NULL,
+  'API_CODE' => 'residentapi',
   'REST_ON' => 'N',
   'NAME' => 'Жители',
   'ACTIVE' => 'Y',
