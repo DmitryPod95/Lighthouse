@@ -46,7 +46,7 @@ class Version20231018231321 extends Version
     0 => 's1',
   ),
   'CODE' => 'houses',
-  'API_CODE' => NULL,
+  'API_CODE' => 'housesapi',
   'REST_ON' => 'N',
   'NAME' => 'Дома',
   'ACTIVE' => 'Y',

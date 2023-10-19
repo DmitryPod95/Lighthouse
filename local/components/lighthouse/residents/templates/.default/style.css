@@ -1,0 +1,8 @@
+.container {
+	border: 2px solid #0083d1;
+	border-radius: 10px;
+}
+
+.items {
+	margin: 5px;
+}
