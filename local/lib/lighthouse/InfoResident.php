@@ -1,13 +1,11 @@
 <?php
 
-namespace lighthouse;
+namespace Lighthouse;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\UI\PageNavigation;
-
-require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-
-Loader::includeModule('iblock');
+use Bitrix\Iblock\Elements\ElementResidentapiTable;
+use Bitrix\Iblock\Elements\ElementHousesapiTable;
 
 class InfoResident
 {
@@ -39,8 +37,13 @@ class InfoResident
      */
     private static function getResidents(PageNavigation $navigation, int $cacheTime): array
     {
-        $dateResident = \Bitrix\Iblock\Elements\ElementResidentapiTable::getList([
-            'select' => ["NAME", "FIO","HOME"],
+
+        $dateResident = ElementResidentapiTable::getList([
+            'select' => [
+            	"NAME", 
+            	"USER_FIO" 	=> "FIO.VALUE",
+            	"USER_HOME" => "HOME.IBLOCK_GENERIC_VALUE",
+            ],
             'offset' => $navigation->getOffset(),
             'count_total' => 1,
             'limit' => $navigation->getLimit(),
@@ -54,11 +57,11 @@ class InfoResident
         while( $arResidents = $dateResident->fetch()) {
 
             $arInfoResidents[] = [
-                "NAME"  => $arResidents["IBLOCK_ELEMENTS_ELEMENT_RESIDENTAPI_FIO_VALUE"],
-                "HOME"  => $arResidents["IBLOCK_ELEMENTS_ELEMENT_RESIDENTAPI_HOME_IBLOCK_GENERIC_VALUE"],
+                "NAME"  => $arResidents["USER_FIO"],
+                "HOME"  => $arResidents["USER_HOME"],
             ];
 
-            self::$arPropHomeID[$arResidents["IBLOCK_ELEMENTS_ELEMENT_RESIDENTAPI_HOME_IBLOCK_GENERIC_VALUE"]] = $arResidents["IBLOCK_ELEMENTS_ELEMENT_RESIDENTAPI_HOME_IBLOCK_GENERIC_VALUE"];
+            self::$arPropHomeID[$arResidents["USER_HOME"]] = $arResidents["USER_HOME"];
         }
 
 
@@ -74,8 +77,13 @@ class InfoResident
     private static function getHouses(array $idsHouses, int $cacheTime): array
     {
 
-        $dateHouse = \Bitrix\Iblock\Elements\ElementHousesapiTable::getList([
-            'select'    => ["ID","NAME", "NUMBER", "CITY", "STREET"],
+        $dateHouse = ElementHousesapiTable::getList([
+            'select'    => [
+            	"ID", 
+            	"HOME_NUMBER" 	=> "NUMBER.VALUE", 
+            	"HOME_CITY" 	=> "CITY.VALUE", 
+            	"HOME_STREET" 	=> "STREET.VALUE",
+            ],
             'filter'    => [ "ID" => array_values($idsHouses)],
             'cache'     => [
                 'ttl' => $cacheTime,
@@ -84,9 +92,9 @@ class InfoResident
 
         while($arHouses = $dateHouse->fetch()) {
             $arInfoHouses[$arHouses["ID"]] = [
-                "CITY"      => $arHouses["IBLOCK_ELEMENTS_ELEMENT_HOUSESAPI_CITY_VALUE"],
-                "STREET"    => $arHouses["IBLOCK_ELEMENTS_ELEMENT_HOUSESAPI_STREET_VALUE"],
-                "NUMBER"    => $arHouses["IBLOCK_ELEMENTS_ELEMENT_HOUSESAPI_NUMBER_VALUE"],
+                "CITY"      => $arHouses["HOME_CITY"],
+                "STREET"    => $arHouses["HOME_STREET"],
+                "NUMBER"    => $arHouses["HOME_NUMBER"],
             ];
         }
 
