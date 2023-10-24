@@ -9,33 +9,12 @@ use Bitrix\Iblock\Elements\ElementHousesapiTable;
 
 class InfoResident
 {
-    private static $arPropHomeID = [];
-
-    /** result info residents
-     * @return array
-     */
-    public function resultInfo(PageNavigation $navigation, int $cacheTime): array
-    {
-
-        $arResident = self::getResidents($navigation, $cacheTime);
-        $arHouses = self::getHouses(self::$arPropHomeID,$cacheTime);
-
-        foreach ($arResident as &$resident) {
-            foreach ($arHouses as $key => $items) {
-                if(strcasecmp($resident["HOME"],$key) == 0) {
-                    $resident["HOME"] = implode(", ",$items);
-                }
-            }
-        }
-
-        return $arResident ?? [];
-    }
 
     /** get elements from iblock resident
      * @param $cacheTime - component parameters
      * @return array
      */
-    private static function getResidents(PageNavigation $navigation, int $cacheTime): array
+    public function residentsInfo(PageNavigation $navigation, int $cacheTime): array
     {
 
         $dateResident = ElementResidentapiTable::getList([
@@ -54,6 +33,7 @@ class InfoResident
 
         $navigation->setRecordCount($dateResident->getCount());
 
+        $arPropHomeID = [];
         while( $arResidents = $dateResident->fetch()) {
 
             $arInfoResidents[] = [
@@ -61,9 +41,18 @@ class InfoResident
                 "HOME"  => $arResidents["USER_HOME"],
             ];
 
-            self::$arPropHomeID[$arResidents["USER_HOME"]] = $arResidents["USER_HOME"];
+            $arPropHomeID[$arResidents["USER_HOME"]] = $arResidents["USER_HOME"];
         }
 
+        $arHouses = self::getHouses($arPropHomeID,$cacheTime);
+
+        foreach ($arInfoResidents as &$resident) {
+            foreach ($arHouses as $key => $items) {
+                if(strcasecmp($resident["HOME"],$key) == 0) {
+                    $resident["HOME"] = implode(", ",$items);
+                }
+            }
+        }
 
         return $arInfoResidents ?? [];
     }
