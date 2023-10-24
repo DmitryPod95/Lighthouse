@@ -25,7 +25,7 @@ class Residents extends CBitrixComponent
         $residents = new InfoResident();
 
         try {
-            $this->arResult['ITEMS'] = $residents->resultInfo(
+            $this->arResult['ITEMS'] = $residents->residentsInfo(
                 $navigation,
                 $this->arParams["CACHE_TIME"],
             );
